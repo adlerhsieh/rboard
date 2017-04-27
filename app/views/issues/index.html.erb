@@ -1,0 +1,20 @@
+<% @columns.each do |column| %>
+  <h3><%= column[:name] %></h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>number</th>
+        <th>title</th>
+      </tr>
+    </thead>
+    <% column[:cards].each do |issue| %>
+      <tr>
+        <td><%= issue.id %></td>
+        <td><%= issue.number %></td>
+        <td><%= issue.title %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
