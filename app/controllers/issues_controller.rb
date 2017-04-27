@@ -1,10 +1,9 @@
 class IssuesController < ApplicationController
   def index
-    repo_name = "mozo-wdg/mozo5"
     @client = Octokit::Client.new(access_token: ENV["github_token"])
-    @issues = @client.issues(repo_name)
+    @issues = @client.issues("#{ENV["org_name"]}/#{ENV["repo_name"]}", state: "all")
 
-    @projects = @client.org_projects("mozo-wdg")
+    @projects = @client.org_projects(ENV["org_name"])
     @project = @projects.first
     @columns = @client.project_columns(@project.id)
 
@@ -12,9 +11,10 @@ class IssuesController < ApplicationController
       {
         name: column[:name],
         cards: @client.column_cards(column.id).map {|card|
-          issue_number = card[:content_url].split("/").last
-          @client.issue(repo_name, issue_number)
-        }
+          issue_number = card[:content_url].split("/").last.to_i
+          @issues.select {|issue| issue[:number] == issue_number }.first
+          # @client.issue(repo_name, issue_number)
+        }.compact
       }
     }
 
